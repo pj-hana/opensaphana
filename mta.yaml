@@ -1,0 +1,64 @@
+ID: openSAPHANA5
+_schema-version: '2.0'
+version: 0.0.1
+
+modules:
+ - name: web
+   type: html5
+   path: web
+   requires:
+      - name: openSAPHANA5__01-uaa
+      
+
+ - name: core_db
+   type: hdb
+   path: core_db
+   requires:
+      - name: hdi-container
+        properties:
+          TARGET_CONTAINER: ~{hdi-container-name}
+      - name: user-container
+        group: SERVICE_REPLACEMENTS
+        properties:
+          key: hdi-user-service
+          service: ~{user-container-name}
+      - name: CrossSchemaService
+        group: SERVICE_REPLACEMENTS
+        properties:
+          key: hdi-sflight-service
+          service: ~{sflight-service-name}
+
+ - name: user_db
+   type: hdb
+   path: user_db
+   requires:
+    - name: user-container
+      properties:
+          TARGET_CONTAINER: ~{user-container-name}
+
+resources:
+  - name: openSAPHANA5__01-uaa
+    type: com.sap.xs.uaa
+    parameters:
+      config_path: ./xs-security.json 
+  
+  - name: hdi-container
+    properties:
+       hdi-container-name: ${service-name}
+    type: com.sap.xs.hdi-container
+  
+  - name: user-container
+    parameters:
+       config:
+          schema: OPENSAP_HANA_USER_1
+    properties:
+       user-container-name: ${service-name}
+    type: com.sap.xs.hdi-container
+
+  - name: CrossSchemaService
+    parameters:
+      service-name: SFLIGHT_ACCESS_SERVICE
+    properties:
+       sflight-service-name: ${service-name}
+    type: org.cloudfoundry.existing-service
+  
