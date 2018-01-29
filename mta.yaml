@@ -12,7 +12,7 @@ modules:
         group: destinations
         properties:
             name: core-backend
-            url: {~url}
+            url: "~{url}"
             forwardAuthToken: true
 
  - name: core_db
@@ -48,11 +48,13 @@ modules:
    provides:
     - name: core_js_api
       properties:
-         url: ${default-url}
+         url: "${default-url}"
    requires: 
     - name: openSAPHANA5__01-uaa
     - name: hdi-container
     - name: core_db
+    - name: sap.hana.democontent.epm.services.images
+    - name: CROSS_SCHEMA_SFLIGHT
 
 resources:
   - name: openSAPHANA5__01-uaa
@@ -79,4 +81,16 @@ resources:
     properties:
        sflight-service-name: ${service-name}
     type: org.cloudfoundry.existing-service
-  
+   
+  - name: CROSS_SCHEMA_SFLIGHT
+    parameters:
+      service-name: SFLIGHT_ACCESS_SERVICE
+    type: org.cloudfoundry.existing-service
+    
+  - name: sap.hana.democontent.epm.services.images
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: sap.hana.democontent.epm.services.images 
+    properties:
+       xshttpdest-images-service-name: ${service-name}
+    
