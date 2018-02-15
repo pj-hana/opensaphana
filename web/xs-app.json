@@ -2,6 +2,11 @@
 	"welcomeFile": "index.html",
 	"authenticationMethod": "route",
 	"routes": [{
+		"source": "/node(.*)",
+		"destination": "core-backend",
+		"csrfProtection": true,
+		"authenticationType": "xsuaa"
+	}, {
 		"source": "(.*)(.xsjs)",
 		"destination": "core-backend",
 		"csrfProtection": false,
@@ -10,5 +15,13 @@
 		"source": "(.*)(.xsodata)",
 		"destination": "core-backend",
 		"authenticationType": "xsuaa"
+	}, {
+		"source": "/(.*)",
+		"localDir": "resources",
+		"authenticationType": "xsuaa",
+		"replace": {
+			"pathSuffixes": ["index.html", "odataTest.html"],
+			"vars": ["ui5liburl"]
+		}
 	}]
 }

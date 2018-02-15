@@ -1,96 +1,93 @@
 ID: openSAPHANA5
 _schema-version: '2.0'
 version: 0.0.1
-
 modules:
- - name: web
-   type: html5
-   path: web
-   requires:
+  - name: web
+    type: html5
+    path: web
+    requires:
       - name: openSAPHANA5__01-uaa
       - name: core_js_api
         group: destinations
         properties:
-            name: core-backend
-            url: "~{url}"
-            forwardAuthToken: true
-
- - name: core_db
-   type: hdb
-   path: core_db
-   requires:
+          name: core-backend
+          url: '~{url}'
+          forwardAuthToken: true
+      - name: ui5-lib
+        properties:
+          ui5liburl: '~{url}'
+  - name: core_db
+    type: hdb
+    path: core_db
+    requires:
       - name: hdi-container
         properties:
-          TARGET_CONTAINER: ~{hdi-container-name}
+          TARGET_CONTAINER: '~{hdi-container-name}'
       - name: user-container
         group: SERVICE_REPLACEMENTS
         properties:
           key: hdi-user-service
-          service: ~{user-container-name}
+          service: '~{user-container-name}'
       - name: CrossSchemaService
         group: SERVICE_REPLACEMENTS
         properties:
           key: hdi-sflight-service
-          service: ~{sflight-service-name}
-
- - name: user_db
-   type: hdb
-   path: user_db
-   requires:
-    - name: user-container
-      properties:
-          TARGET_CONTAINER: ~{user-container-name}
-
-
- - name: core_js
-   type: nodejs
-   path: core_js
-   provides:
-    - name: core_js_api
-      properties:
-         url: "${default-url}"
-   requires: 
-    - name: openSAPHANA5__01-uaa
-    - name: hdi-container
-    - name: core_db
-    - name: sap.hana.democontent.epm.services.images
-    - name: CROSS_SCHEMA_SFLIGHT
-
+          service: '~{sflight-service-name}'
+  - name: user_db
+    type: hdb
+    path: user_db
+    requires:
+      - name: user-container
+        properties:
+          TARGET_CONTAINER: '~{user-container-name}'
+  - name: core_js
+    type: nodejs
+    path: core_js
+    provides:
+      - name: core_js_api
+        properties:
+          url: '${default-url}'
+    requires:
+      - name: openSAPHANA5__01-uaa
+      - name: hdi-container
+      - name: core_db
+      - name: sap.hana.democontent.epm.services.images
+      - name: CROSS_SCHEMA_SFLIGHT
 resources:
   - name: openSAPHANA5__01-uaa
     type: com.sap.xs.uaa
     parameters:
-      config_path: ./xs-security.json 
-  
+      config_path: ./xs-security.json
   - name: hdi-container
     properties:
-       hdi-container-name: ${service-name}
+      hdi-container-name: '${service-name}'
     type: com.sap.xs.hdi-container
-  
   - name: user-container
     parameters:
-       config:
-          schema: OPENSAP_HANA_USER_1
+      config:
+        schema: OPENSAP_HANA_USER_1
     properties:
-       user-container-name: ${service-name}
+      user-container-name: '${service-name}'
     type: com.sap.xs.hdi-container
-
   - name: CrossSchemaService
     parameters:
       service-name: SFLIGHT_ACCESS_SERVICE
     properties:
-       sflight-service-name: ${service-name}
+      sflight-service-name: '${service-name}'
     type: org.cloudfoundry.existing-service
-   
   - name: CROSS_SCHEMA_SFLIGHT
     parameters:
       service-name: SFLIGHT_ACCESS_SERVICE
     type: org.cloudfoundry.existing-service
-    
   - name: sap.hana.democontent.epm.services.images
     type: org.cloudfoundry.existing-service
     parameters:
-      service-name: sap.hana.democontent.epm.services.images 
+      service-name: sap.hana.democontent.epm.services.images
     properties:
-       xshttpdest-images-service-name: ${service-name}
-    
+      xshttpdest-images-service-name: '${service-name}'
+  - name: ui5-lib
+    type: configuration
+    parameters:
+      ID: com.sap.ui5.dist.sapui5-dist-xsa.XSAC_UI5_FESV3:sapui5_fesv3
+      name: sapui5_fesv3
+      version: '1.44.18'

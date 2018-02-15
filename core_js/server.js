@@ -1,7 +1,21 @@
 /*eslint no-console: 0, no-unused-vars: 0*/
 "use strict";
-
-var xsjs  = require("@sap/xsjs");
+var port = process.env.PORT || 3000;
+var server = require("http").createServer();
+global.__base = __dirname + "/";
+var init = require(global.__base + "utils/initialize");
+//Initialize Express App for XSA UAA and HDBEXT Middleware
+var app = init.initExpress();
+//Setup Routes
+var router = require("./router")(app, server);
+//Initialize the XSJS Compatibility Layer
+init.initXSJS(app);
+//Start the Server
+server.on("request", app);
+server.listen(port, function() {
+	console.info("HTTP Server: " + server.address().port);
+});
+/*var xsjs  = require("@sap/xsjs");
 var xsenv = require("@sap/xsenv");
 var port  = process.env.PORT || 3000;
 
@@ -27,13 +41,16 @@ try {
 //Add SQLCC
 try{
 	options.hana.sqlcc = xsenv.getServices({
-		"xsjs.sqlcc_config":"CROSS_SCHEMA_SFLIGHT"
+		'my.sqlcc_config':'CROSS_SCHEMA_SFLIGHT'
 	});
+	
+
+	
 }catch (err) {
 	console.log("[WARN]", err.message);
 }
 
 // start server
 xsjs(options).listen(port);
-
 console.log("Server listening on port %d", port);
+*/
